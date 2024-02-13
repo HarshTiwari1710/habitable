@@ -45,12 +45,59 @@ class _SleepState extends State<Sleep> {
     }
   }
   void _showScratchCardDialoug( int dayIndex) {
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-        content: Scratcher(
-          brushSize: 50,
-          color: Color(0xff1f3751),
-          child: Container(
+    bool isCardAlreadyScratched = false;
+    bool isCardScratched = false;
+    if(isCardAlreadyScratched == false){
+      showDialog(context: context, builder: (context){
+        return AlertDialog(
+          content: Scratcher(
+            onChange: (value){
+              if(value>=1){
+                setState(() {
+                  isCardScratched = true;
+                });
+              }
+            },
+            onScratchEnd: () {
+              setState(() {
+                isCardAlreadyScratched = true;
+              });
+            },
+            brushSize: 50,
+            color: Color(0xff1f3751),
+            child: Container(
+              width: 200,
+              height: 200,
+              child: Center(
+                child: Text(
+                  'Challenge : ${_getChallengeText(dayIndex)}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),
+                ),
+
+              ),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: (){
+                if(isCardScratched == true) {
+                  _handleDayColorChange(dayIndex);
+                  _handleDayCompletion(dayIndex);
+                } else {
+                  null;
+                }
+
+              }, child: Text('Challenge Completed',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    } else if(isCardAlreadyScratched == true) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Container(
             width: 200,
             height: 200,
             child: Center(
@@ -62,19 +109,23 @@ class _SleepState extends State<Sleep> {
 
             ),
           ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: TextButton(onPressed: (){
-              _handleDayColorChange(dayIndex);
-              _handleDayCompletion(dayIndex);
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: (){
+                if(isCardScratched == true) {
+                  _handleDayColorChange(dayIndex);
+                  _handleDayCompletion(dayIndex);
+                } else {
+                  null;
+                }
 
-            }, child: Text('Challenge Completed',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),)),
-          )
-        ],
-      );
-    });
+              }, child: Text('Challenge Completed',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    }
   }
   void _handleDayCompletion(int dayIndex){
     return setState((){

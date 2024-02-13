@@ -44,38 +44,7 @@ class _HealthState extends State<Health> {
       prefs.setBool('Health day_$i', isDayCompletedHealth[i]);
     }
   }
-  void _showScratchCardDialog(int dayIndexHealth) {
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        content: Scratcher(
-          brushSize: 50,
-          color: Color(0xff1f3751),
-          child: Container(
-            width: 200,
-            height: 200,
-            child: Center(
-              child: Text(
-                'Challenge: ${_getChallengeTextHealth(dayIndexHealth)}',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          Padding(padding: EdgeInsets.only(right: 20),
-            child: TextButton(onPressed: (){
-              _handleDayColorChangeHealth(dayIndexHealth);
-              _handleDayCompletionHealth(dayIndexHealth);
-            },
-              child: Text('Challenge Completed',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),),
 
-            ),
-          )
-        ],
-      );
-    });
-  }
   void _handleDayCompletionHealth(int dayIndexHealth){
     return setState(() {
       isDayCompletedHealth[dayIndexHealth] = true;
@@ -134,6 +103,95 @@ class _HealthState extends State<Health> {
         ),
       );
     });
+  }
+  void _showScratchCardDialog(int dayIndexHealth) {
+    bool isCardAlreadyScratched = false;
+    bool isCardScratched = false;
+    if (isCardAlreadyScratched == false) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Scratcher(
+            onChange: (value) {
+              if (value >= 1) {
+                setState(() {
+                  isCardScratched = true;
+                });
+              }
+            },
+            onScratchEnd: () {
+              setState(() {
+                isCardAlreadyScratched = true;
+              });
+            },
+            brushSize: 50,
+            color: Color(0xff1f3751),
+            child: Container(
+              width: 200,
+              height: 200,
+              child: Center(
+                child: Text(
+                  'Challenge : ${_getChallengeTextHealth(dayIndexHealth)}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.merriweather(
+                      color: Color(0xffee2562), fontSize: 15),
+                ),
+
+              ),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayCompletionHealth(dayIndexHealth);
+                _handleDayColorChangeHealth(dayIndexHealth);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    } else if (isCardAlreadyScratched == true) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Container(
+            width: 200,
+            height: 200,
+            child: Center(
+              child: Text(
+                'Challenge : ${_getChallengeTextHealth(dayIndexHealth)}',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.merriweather(
+                    color: Color(0xffee2562), fontSize: 15),
+              ),
+
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayColorChangeHealth(dayIndexHealth);
+                  _handleDayCompletionHealth(dayIndexHealth);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {

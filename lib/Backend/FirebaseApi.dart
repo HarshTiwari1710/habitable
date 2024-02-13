@@ -14,7 +14,6 @@ class FirebaseApi{
     saveFCMToken(fCMToken!);
     print('Token: $fCMToken');
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-
   }
   String getCurrentUserId(){
     User? user = FirebaseAuth.instance.currentUser;

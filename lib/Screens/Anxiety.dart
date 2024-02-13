@@ -44,38 +44,7 @@ class _AnxietyState extends State<Anxiety> {
       prefs.setBool('Anxiety day_$i', isDayCompletedAnxiety[i]);
     }
   }
-  void _showScratchCardDialog(int dayIndexAnxiety) {
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        content: Scratcher(
-          brushSize: 50,
-          color: Color(0xff1f3751),
-          child: Container(
-            width: 200,
-            height: 200,
-            child: Center(
-              child: Text(
-                'Challenge: ${_getChallengeTextAnxiety(dayIndexAnxiety)}',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          Padding(padding: EdgeInsets.only(right: 20),
-            child: TextButton(onPressed: (){
-              _handleDayColorChangeAnxiety(dayIndexAnxiety);
-              _handleDayCompletionAnxiety(dayIndexAnxiety);
-            },
-              child: Text('Challenge Completed',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),),
 
-            ),
-          )
-        ],
-      );
-    });
-  }
   void _handleDayCompletionAnxiety(int dayIndexAnxiety){
     return setState(() {
       isDayCompletedAnxiety[dayIndexAnxiety] = true;
@@ -134,6 +103,95 @@ class _AnxietyState extends State<Anxiety> {
         ),
       );
     });
+  }
+  void _showScratchCardDialog(int dayIndexAnxiety) {
+    bool isCardAlreadyScratched = false;
+    bool isCardScratched = false;
+    if (isCardAlreadyScratched == false) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Scratcher(
+            onChange: (value) {
+              if (value >= 1) {
+                setState(() {
+                  isCardScratched = true;
+                });
+              }
+            },
+            onScratchEnd: () {
+              setState(() {
+                isCardAlreadyScratched = true;
+              });
+            },
+            brushSize: 50,
+            color: Color(0xff1f3751),
+            child: Container(
+              width: 200,
+              height: 200,
+              child: Center(
+                child: Text(
+                  'Challenge : ${_getChallengeTextAnxiety(dayIndexAnxiety)}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.merriweather(
+                      color: Color(0xffee2562), fontSize: 15),
+                ),
+
+              ),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayCompletionAnxiety(dayIndexAnxiety);
+                  _handleDayColorChangeAnxiety(dayIndexAnxiety);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    } else if (isCardAlreadyScratched == true) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Container(
+            width: 200,
+            height: 200,
+            child: Center(
+              child: Text(
+                'Challenge : ${_getChallengeTextAnxiety(dayIndexAnxiety)}',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.merriweather(
+                    color: Color(0xffee2562), fontSize: 15),
+              ),
+
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayColorChangeAnxiety(dayIndexAnxiety);
+                  _handleDayCompletionAnxiety(dayIndexAnxiety);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {

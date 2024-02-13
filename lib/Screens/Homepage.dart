@@ -3,11 +3,13 @@ import 'package:apps/Screens/Declutter.dart';
 import 'package:apps/Screens/Fitness.dart';
 import 'package:apps/Screens/Health.dart';
 import 'package:apps/Screens/Journal.dart';
+import 'package:apps/Screens/MainScreen.dart';
 import 'package:apps/Screens/Reading.dart';
 import 'package:apps/Screens/Sleep.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'Detox.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +19,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn signin = GoogleSignIn();
+  Future<void> _signOut() async {
+    if(signin.currentUser != null) {
+      await signin.signOut();
+    } else {
+      await _auth.signOut();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +43,13 @@ class _HomePageState extends State<HomePage> {
         iconTheme: IconThemeData(color: Colors.white),
         title: Text('HABITABLE',style: GoogleFonts.merriweather(color: Colors.white,fontSize: 18),),
         centerTitle: true,
+        actions: [
+          IconButton(onPressed: () async{
+            await _signOut().then((value) => {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()))
+            });
+          }, icon:Icon(Icons.login,color: Colors.white,size: 25,))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -44,44 +44,35 @@ class _ReadingState extends State<Reading> {
       prefs.setBool('Reading day_$i', ReadingComplete[i]);
     }
   }
-  void _showScratchCardDialog(int dayIndexReading) {
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-        content: Scratcher(
-          brushSize: 50,
-          color: Color(0xff1f3751),
-          child: Container(
-            width: 200,
-            height: 200,
-            child: Center(
-              child: Text(
-                'Challenge: ${_getChallengeTextReading(dayIndexReading)}',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          Padding(padding: EdgeInsets.only(right: 20),
-            child: TextButton(onPressed: (){
-              _handleDayColorChangeReading(dayIndexReading);
-              _handleDayCompletionReading(dayIndexReading);
-            },
-              child: Text('Challenge Completed',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),),
 
-            ),
-          )
-        ],
-      );
-    });
-  }
   void _handleDayCompletionReading(int dayIndexReading){
     return setState(() {
       ReadingComplete[dayIndexReading] = true;
       if(isAllDaysCompletedReading()){
         _showConfetti();
       }
+    });
+  }
+  void _showConfetti(){
+    confettiControllerReading.play();
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        content: Container(
+          width: 200,
+          height: 200,
+          child: Column(
+            children: [
+              Text('Congratulations! Challenge Completed!',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 25,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+              ConfettiWidget(
+                confettiController: confettiControllerReading,
+                blastDirection: -1.0, // straight up
+                emissionFrequency: 0.05,
+                numberOfParticles: 20,
+              ),
+            ],
+          ),
+        ),
+      );
     });
   }
   bool isAllDaysCompletedReading(){
@@ -113,27 +104,94 @@ class _ReadingState extends State<Reading> {
     ];
     return ChallengeSentencesReading[dayIndexReading&ChallengeSentencesReading.length];
   }
-  void _showConfetti(){
-    confettiControllerReading.play();
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-        content: Container(
-          width: 200,
-          height: 200,
-          child: Column(
-            children: [
-              Text('Congratulations! Challenge Completed!',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 25,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-              ConfettiWidget(
-                confettiController: confettiControllerReading,
-                blastDirection: -1.0, // straight up
-                emissionFrequency: 0.05,
-                numberOfParticles: 20,
+  void _showScratchCardDialog(int dayIndexReading) {
+    bool isCardAlreadyScratched = false;
+    bool isCardScratched = false;
+    if (isCardAlreadyScratched == false) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Scratcher(
+            onChange: (value) {
+              if (value >= 1) {
+                setState(() {
+                  isCardScratched = true;
+                });
+              }
+            },
+            onScratchEnd: () {
+              setState(() {
+                isCardAlreadyScratched = true;
+              });
+            },
+            brushSize: 50,
+            color: Color(0xff1f3751),
+            child: Container(
+              width: 200,
+              height: 200,
+              child: Center(
+                child: Text(
+                  'Challenge : ${_getChallengeTextReading(dayIndexReading)}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.merriweather(
+                      color: Color(0xffee2562), fontSize: 15),
+                ),
+
               ),
-            ],
+            ),
           ),
-        ),
-      );
-    });
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayColorChangeReading(dayIndexReading);
+                  _handleDayCompletionReading(dayIndexReading);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    } else if (isCardAlreadyScratched == true) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Container(
+            width: 200,
+            height: 200,
+            child: Center(
+              child: Text(
+                'Challenge : ${_getChallengeTextReading(dayIndexReading)}',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.merriweather(
+                    color: Color(0xffee2562), fontSize: 15),
+              ),
+
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayCompletionReading(dayIndexReading);
+                  _handleDayColorChangeReading(dayIndexReading);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Fitness extends StatefulWidget {
   const Fitness({super.key});
 
-  @override
   State<Fitness> createState() => _FitnessState();
 }
 
@@ -45,38 +44,6 @@ class _FitnessState extends State<Fitness> {
     for(int i = 0; i<isDayCompletedFitness.length;i++){
       prefs.setBool('exercise day_$i', isDayCompletedFitness[i]);
     }
-  }
-  void _showScratchCardDialog(int dayIndexFitness){
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-        content: Scratcher(
-          brushSize: 50,
-          color: Color(0xff1f3751),
-          child: Container(
-            width: 200,
-            height: 200,
-            child: Center(
-              child: Text(
-                'Challenge: ${_getChallengeTextFitness(dayIndexFitness)}',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          Padding(padding: EdgeInsets.only(right: 20),
-          child: TextButton(onPressed: (){
-            _handleDayColorChangeFitness(dayIndexFitness);
-            _handleDayCompletionFitness(dayIndexFitness);
-          },
-          child: Text('Challenge Completed',style: GoogleFonts.merriweather(color: Color(0xffee2562),fontSize: 15),),
-
-          ),
-          )
-        ],
-      );
-    });
   }
   void _handleDayCompletionFitness(int dayIndexFitness){
     return setState(() {
@@ -138,6 +105,96 @@ class _FitnessState extends State<Fitness> {
     });
   }
 
+  void _showScratchCardDialog(int dayIndexFitness) {
+    bool isCardAlreadyScratched = false;
+    bool isCardScratched = false;
+    if (isCardAlreadyScratched == false) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Scratcher(
+            onChange: (value) {
+              if (value >= 1) {
+                setState(() {
+                  isCardScratched = true;
+                });
+              }
+            },
+            onScratchEnd: () {
+              setState(() {
+                isCardAlreadyScratched = true;
+              });
+            },
+            brushSize: 50,
+            color: Color(0xff1f3751),
+            child: Container(
+              width: 200,
+              height: 200,
+              child: Center(
+                child: Text(
+                  'Challenge : ${_getChallengeTextFitness(dayIndexFitness)}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.merriweather(
+                      color: Color(0xffee2562), fontSize: 15),
+                ),
+
+              ),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayColorChangeFitness(dayIndexFitness);
+                  _handleDayCompletionFitness(dayIndexFitness);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    } else if (isCardAlreadyScratched == true) {
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Container(
+            width: 200,
+            height: 200,
+            child: Center(
+              child: Text(
+                'Challenge : ${_getChallengeTextFitness(dayIndexFitness)}',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.merriweather(
+                    color: Color(0xffee2562), fontSize: 15),
+              ),
+
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: TextButton(onPressed: () {
+                if (isCardScratched == true) {
+                  _handleDayColorChangeFitness(dayIndexFitness);
+                  _handleDayCompletionFitness(dayIndexFitness);
+                } else {
+                  null;
+                }
+              },
+                  child: Text('Challenge Completed',
+                    style: GoogleFonts.merriweather(
+                        color: Color(0xffee2562), fontSize: 15),)),
+            )
+          ],
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,45 +203,54 @@ class _FitnessState extends State<Fitness> {
         backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
-          Text('Improve your physical Fitness     ',style: GoogleFonts.merriweather(color: Colors.white,fontSize: 15),)
+          Text('Improve your physical Fitness     ',
+            style: GoogleFonts.merriweather(color: Colors.white, fontSize: 15),)
         ],
       ),
-      body:SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(padding: EdgeInsets.only(top: 30),
-                child: Center(child: Image.asset('assets/dumbbell.png')),
-              ),
-              SizedBox(height: 50,),
-              Text("Stay physically active with this home workout. Take your time, every move counts",style: GoogleFonts.merriweather(color: Colors.white,fontSize: 16),softWrap: true,textAlign: TextAlign.center,),
-              SizedBox(height: 30,),
-              SingleChildScrollView(
-                child: GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:5,
-                  childAspectRatio:1.0,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(padding: EdgeInsets.only(top: 30),
+              child: Center(child: Image.asset('assets/dumbbell.png')),
+            ),
+            SizedBox(height: 50,),
+            Text(
+              "Stay physically active with this home workout. Take your time, every move counts",
+              style: GoogleFonts.merriweather(
+                  color: Colors.white, fontSize: 16),
+              softWrap: true,
+              textAlign: TextAlign.center,),
+            SizedBox(height: 30,),
+            SingleChildScrollView(
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  childAspectRatio: 1.0,
                 ),
-                    shrinkWrap: true,
-                    itemBuilder: (context,indexFitness){
+                shrinkWrap: true,
+                itemBuilder: (context, indexFitness) {
                   return GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       _showScratchCardDialog(indexFitness);
                     },
                     child: Card(
-                      color: isDayCompletedFitness[indexFitness]? Color(0xffee2562):Colors.transparent,
+                      color: isDayCompletedFitness[indexFitness] ? Color(
+                          0xffee2562) : Colors.transparent,
                       child: Center(
                         child: Text(
-                            (indexFitness + 1).toString(),
-                          style: GoogleFonts.merriweather(fontSize: 15,color: Colors.white),
+                          (indexFitness + 1).toString(),
+                          style: GoogleFonts.merriweather(
+                              fontSize: 15, color: Colors.white),
                         ),
                       ),
                     ),
                   );
-                    },
+                },
                 itemCount: 21,
-                ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
